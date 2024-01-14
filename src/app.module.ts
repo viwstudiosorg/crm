@@ -11,12 +11,12 @@ import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 @Module({
   imports: [EmployeesModule, TypeOrmModule.forRoot({
-    type: 'mysql',
-    host: 'localhost',
-    port: 3306,
-    username: 'root',
-    password: 'root',
-    database: 'crm',
+    type: 'postgres',
+    host: 'db.qhuflryacbjwzzxfbxqr.supabase.co',
+    port: 5432,
+    username: 'postgres',
+    password: '4eVLtzyMYzerA1FO',
+    database: 'postgres',
     autoLoadEntities:true,
     synchronize: true ,
   }), RolesModule, PositionsModule, DepartmentsModule, AuthModule, UsersModule,],

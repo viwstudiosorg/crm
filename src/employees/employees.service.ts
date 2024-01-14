@@ -11,12 +11,14 @@ import { RolesService } from 'src/roles/roles.service';
 
 @Injectable()
 export class EmployeesService {
-  constructor(private dataSource: DataSource,
+  constructor(
+    private dataSource: DataSource,
     @InjectRepository(Employee)
     private readonly employeeRepo: Repository<Employee>,
     private readonly positionService: PositionsService,
     private readonly departmentService: DepartmentsService,
-    private readonly roleService: RolesService) { }
+    private readonly roleService: RolesService,
+  ) {}
 
   async create(createEmployeeDto: CreateEmployeeDto): Promise<Employee> {
     const queryRunner = this.dataSource.createQueryRunner();
@@ -28,9 +30,10 @@ export class EmployeesService {
       this.departmentService.findOne(createEmployeeDto.department),
     ]);
 
-    if (!position) throw new HttpException('Invalid position', HttpStatus.NOT_FOUND);
+    if (!position)
+      throw new HttpException('Invalid position', HttpStatus.NOT_FOUND);
     //Todo : Handle errors for role and department
-    const employeeId = uuid()
+    const employeeId = uuid();
     try {
       const employee = queryRunner.manager.save(Employee, {
         id: employeeId,
@@ -43,8 +46,8 @@ export class EmployeesService {
         total_exp: createEmployeeDto.total_exp,
         phone: createEmployeeDto.phone,
         // status: createEmployeeDto.status,
-        email: createEmployeeDto.email
-      })
+        email: createEmployeeDto.email,
+      });
       await queryRunner.commitTransaction();
       return employee;
     } catch (e) {
@@ -53,22 +56,21 @@ export class EmployeesService {
     } finally {
       await queryRunner.release();
     }
-
   }
 
   async findAll(page: number = 1) {
-    const pageSize = 12
-    const skip = (page - 1) * pageSize;
+    // const pageSize = 12
+    // const skip = (page - 1) * pageSize;
 
     const data = await this.employeeRepo
       .createQueryBuilder('employee')
       .leftJoinAndSelect('employee.department', 'department')
       .leftJoinAndSelect('employee.role', 'role')
       .leftJoinAndSelect('employee.position', 'position')
-      .skip(skip)
-      .take(pageSize)
+      // .skip(skip)
+      // .take(pageSize)
       .getMany();
-    return { data, page, pageSize };
+    return { data, page };
   }
 
   async findOne(id: number) {
